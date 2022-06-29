@@ -1,0 +1,5 @@
+{
+    "require": {
+        "openpsa/quickform": "3.3.*"
+    }
+}

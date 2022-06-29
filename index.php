@@ -1,8 +1,6 @@
 <?php
 session_start();
-require_once 'HTML/QuickForm.php';
-require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
-require_once 'HTML/QuickForm/Renderer/Tableless.php';
+require __DIR__ . '/vendor/autoload.php';
 
 function process_data ($values) {
         echo '<h1>Thank you</h1>';
@@ -27,7 +25,7 @@ function process_data ($values) {
 <div class="regForm">
 <?php
 // Instantiate the HTML_QuickForm object
-$form = new HTML_QuickForm_DHTMLRulesTableless('osm_legal_claim_of_copyright');
+$form = new HTML_QuickForm('osm_legal_claim_of_copyright');
 $renderer = new HTML_QuickForm_Renderer_Tableless();
 
 $form->addElement('header', null, 'OpenStreetMap: Claim of Copyright Infringement');
@@ -86,10 +84,10 @@ $form->addRule('email', 'Please enter a valid Email Address', 'email', null, 'cl
 $form->addElement('text', 'fax',                'Fax', array('size' => 50, 'maxlength' => 255));
 
 $complaint_options = array();
-$complaint_options[] = &HTML_QuickForm::createElement('checkbox', '1_of_4_owner_or_authorised', null, 'I am the owner, or an agent authorized to act on behalf of the owner, of an exclusive right that is allegedly infringed.');
-$complaint_options[] = &HTML_QuickForm::createElement('checkbox', '2_of_4_good_faith', null, 'I have a good faith belief that the use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law; and');
-$complaint_options[] = &HTML_QuickForm::createElement('checkbox', '3_of_4_accurate', null, 'This notification is accurate.');
-$complaint_options[] = &HTML_QuickForm::createElement('checkbox', '4_of_4_not_misrepresent', null, 'I acknowledge that under Section 512(f) any person who knowingly materially misrepresents that material or activity is infringing may be subject to liability for damages.');
+$complaint_options[] = $form->createElement('checkbox', '1_of_4_owner_or_authorised', null, 'I am the owner, or an agent authorized to act on behalf of the owner, of an exclusive right that is allegedly infringed.');
+$complaint_options[] = $form->createElement('checkbox', '2_of_4_good_faith', null, 'I have a good faith belief that the use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law; and');
+$complaint_options[] = $form->createElement('checkbox', '3_of_4_accurate', null, 'This notification is accurate.');
+$complaint_options[] = $form->createElement('checkbox', '4_of_4_not_misrepresent', null, 'I acknowledge that under Section 512(f) any person who knowingly materially misrepresents that material or activity is infringing may be subject to liability for damages.');
 
 $form->addGroup($complaint_options, 'complaint_confirm', 'By checking the following boxes, I state UNDER PENALTY OF PERJURY that (choose all of the options)', '<br />');
 

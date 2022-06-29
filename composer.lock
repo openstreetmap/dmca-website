@@ -1,0 +1,69 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "42f9569c7462249f4fda9545a62ca45a",
+    "packages": [
+        {
+            "name": "openpsa/quickform",
+            "version": "v3.3.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/openpsa/quickform.git",
+                "reference": "1c5adca0db4b0976cb9e6f28469e36a41902a719"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/openpsa/quickform/zipball/1c5adca0db4b0976cb9e6f28469e36a41902a719",
+                "reference": "1c5adca0db4b0976cb9e6f28469e36a41902a719",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">5.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.3.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "lib"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "PHP-3.01"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Flack",
+                    "email": "flack@contentcontrol-berlin.de",
+                    "homepage": "http://www.contentcontrol-berlin.de/"
+                }
+            ],
+            "description": "PHP 5.4 compatible fork of HTML_QuickForm",
+            "keywords": [
+                "form",
+                "quickform"
+            ],
+            "support": {
+                "issues": "https://github.com/openpsa/quickform/issues",
+                "source": "https://github.com/openpsa/quickform/tree/v3.3.7.2"
+            },
+            "time": "2022-05-10T12:32:37+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}
