@@ -1,17 +1,48 @@
 <?php
 session_start();
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 require __DIR__ . '/vendor/autoload.php';
 
 function process_data ($values) {
-        echo '<h1>Thank you</h1>';
-        echo 'Your report has been submitted';
-        $email_body = 'OpenStreetMap - Claim of Copyright Infringement form:'."\n\n";
-        $email_body .= 'Automated Email - Form Posted.'."\n\n";
-        $email_body .= print_r($values, true);
-        $reply_address = $values['name_first'].' '.$values['name_last'].' <'.$values['email'].'>';
-        $email_body .= 'Formatted address: '.$reply_address."\n\n";
-        $email_header = 'From: OSMF Copyright Form <dmca@osmfoundation.org>' . "\r\n" . 'Content-Type: text/plain; charset="utf-8"';
-        mail('dmca@osmfoundation.org','OSM Claim of Copyright Infringement', $email_body, $email_header, '-fdmca@osmfoundation.org');
+  $mail = new PHPMailer(true);
+  try {
+      //Server settings
+      // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+      $mail->isSMTP(); //Send using SMTP
+      $mail->Host       = $_ENV['SMTP_HOST'] ?? 'mail.openstreetmap.org';
+      $mail->SMTPAuth   = false;
+      $mail->Port       = $_ENV['SMTP_PORT'] ?? 26;
+
+      $mail->CharSet = 'UTF-8';
+
+      //Recipients
+      $mail->setFrom('dmca@osmfoundation.org', 'OSMF Copyright Form');
+      $mail->addAddress('dmca@osmfoundation.org');
+      $mail->addReplyTo(trim($values['email']), trim($values['name_first'].' '.$values['name_last']));
+
+      //Content
+      $mail->isHTML(false);
+      $mail->Subject = 'OSM Claim of Copyright Infringement';
+
+      $email_body = 'OpenStreetMap - Claim of Copyright Infringement form:'."\n\n";
+      $email_body .= 'Automated Email - Form Posted.'."\n\n";
+      $email_body .= print_r($values, true);
+      $reply_address = $values['name_first'].' '.$values['name_last'].' <'.$values['email'].'>';
+      $email_body .= 'Formatted address: '.$reply_address."\n\n";
+
+      $mail->Body    = $email_body;
+
+      $mail->send();
+      echo '<h1>Thank you</h1>';
+      echo 'Your report has been submitted';
+  } catch (Exception $e) {
+      echo '<h1>Error</h1>';
+      echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -19,7 +50,7 @@ function process_data ($values) {
 <head>
 <title>OpenStreetMap Legal - Claim of Copyright Infringement</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
- <link rel="stylesheet" type="text/css" href="/style.css" />
+<link rel="stylesheet" type="text/css" href="/style.css" />
 </head>
 <body>
 <div class="regForm">

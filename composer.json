@@ -1,5 +1,6 @@
 {
     "require": {
-        "openpsa/quickform": "3.3.*"
+        "openpsa/quickform": "3.4.*",
+        "phpmailer/phpmailer": "^6.8"
     }
 }
