@@ -7,6 +7,23 @@ use PHPMailer\PHPMailer\Exception;
 
 require __DIR__ . '/vendor/autoload.php';
 
+if (!isset($_SESSION['number1'])) {
+  $_SESSION['number1'] = (int) rand(1,9);
+  $_SESSION['number2'] = (int) rand(1,9);
+}
+
+function dummy_captcha_validate($field) {
+  if (isset($_SESSION['number1'])) {
+    if (isset($_SESSION['number2'])) {
+      $sum = $_SESSION['number1'] + $_SESSION['number2'];
+      if ($field == $sum) {
+        return true;
+      }
+    }
+  }
+ return false;
+}
+
 function process_data ($values) {
   $mail = new PHPMailer(true);
   try {
@@ -124,6 +141,11 @@ $form->addGroup($complaint_options, 'complaint_confirm', 'By checking the follow
 
 $form->addElement('text', 'signature', 'Typing your full name in this box will act as your digital signature.', array('size' => 25, 'maxlength' => 255));
 $form->addRule('signature', 'Field is required', 'required', null, 'client');
+
+$form->registerRule('captcha_validate', 'callback', 'dummy_captcha_validate');
+$form->addElement('text', 'captcha', 'Please add (+) together the following numbers: ' . $_SESSION['number1'] . ' and ' . $_SESSION['number2'], array('size' => 25, 'maxlength' => 255));
+$form->addRule('captcha', 'Captcha field is required', 'required', null, 'client');
+$form->addRule('captcha', 'You did not solve the sum', 'captcha_validate');
 
 $form->addElement('submit', null, 'Send');
 
