@@ -1,3 +1,3 @@
 # dmca.openstreetmap.org
 
-Jejyll website for OpenStreetMap.org DMCA website.
+Jekyll website for OpenStreetMap.org DMCA website.
