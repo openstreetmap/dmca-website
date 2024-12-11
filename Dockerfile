@@ -1,30 +1,51 @@
-FROM docker.io/library/php:7-apache
+# This file is used if building for Production environments
+# It uses a multi-stage build to run jekyll to populate an nginx container
 
-# Use port 8080
-RUN sed -i "s/80/8080/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+FROM docker.io/library/ruby:3.3 as build
 
-# Install composer requirements
+# Add Gem build requirements
 RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    zip \
-    && docker-php-ext-install zip \
-    && rm -rf /var/lib/apt/lists/*
+  g++ \
+  make \
+  && rm -rf /var/lib/apt/lists/*
 
-# Install composer
-COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
+# Create app directory
+WORKDIR /app
 
-WORKDIR /var/www/html/
-ADD . /var/www/html/
+# Add Gemfile and Gemfile.lock
+ADD Gemfile* /app/
 
-# Add user
-RUN groupadd -r user && useradd -m -r -g user user
-RUN mkdir -p /var/www/html/vendor && chown user:user /var/www/html/vendor
-USER user
+# Install Gems
+RUN gem install bundler -v 2.5.23 \
+    && bundle config build.nokogiri --use-system-libraries \
+    && bundle config --global jobs $(nproc) \
+    && bundle config set deployment 'true' \
+    && bundle config set no-cache 'true' \
+    && bundle install \
+    && bundle clean
 
-# Install composer dependencies
-RUN composer install --no-dev --no-cache --no-interaction --no-progress --optimize-autoloader
+# Copy Site Files
+COPY . .
 
-# Basic Linting
-RUN php -l index.php
+ENV JEKYLL_ENV=production
 
-CMD ["docker-php-entrypoint", "apache2-foreground"]
+# Run jekyll build site
+RUN bundle exec jekyll build --verbose
+
+#-------------------------------------------------
+# https://github.com/nginxinc/docker-nginx-unprivileged
+FROM ghcr.io/nginxinc/nginx-unprivileged:stable-alpine as webserver
+
+RUN echo "absolute_redirect off;" >/etc/nginx/conf.d/no-absolute_redirect.conf
+RUN echo "gzip_static on; gzip_proxied any;" >/etc/nginx/conf.d/gzip_static.conf
+# brotli_static not yet available in standard nginx distribution
+# RUN echo "brotli_static on; brotli_proxied any;" >/etc/nginx/conf.d/brotli_static.conf
+
+# Copy built site from build stage
+COPY --from=build /app/_site /usr/share/nginx/html
+
+# Test configuration during docker build
+RUN nginx -t
+
+# Port the container will listen on
+EXPOSE 8080

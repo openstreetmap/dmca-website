@@ -1,3 +1,3 @@
 # dmca.openstreetmap.org
 
-PHP quickforms website for OpenStreetMap.org DMCA notification website.
+Jejyll website for OpenStreetMap.org DMCA website.

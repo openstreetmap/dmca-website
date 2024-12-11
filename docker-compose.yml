@@ -1,5 +1,3 @@
-version: '2'
-
 services:
 
   app:
@@ -7,6 +5,3 @@ services:
       context: .
     ports:
       - 8080:8080
-    environment:
-      - SMTP_HOST=mail.openstreetmap.org
-      - SMTP_PORT=26
